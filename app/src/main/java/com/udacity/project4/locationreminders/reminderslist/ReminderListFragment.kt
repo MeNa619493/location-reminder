@@ -12,6 +12,8 @@ import com.udacity.project4.authentication.AuthenticationActivity
 import com.udacity.project4.base.BaseFragment
 import com.udacity.project4.base.NavigationCommand
 import com.udacity.project4.databinding.FragmentRemindersBinding
+import com.udacity.project4.utils.EspressoIdlingResource
+import com.udacity.project4.utils.EspressoIdlingResource.wrapEspressoIdlingResource
 import com.udacity.project4.utils.setDisplayHomeAsUpEnabled
 import com.udacity.project4.utils.setTitle
 import com.udacity.project4.utils.setup
@@ -39,12 +41,7 @@ class ReminderListFragment : BaseFragment() {
 
         binding.refreshLayout.setOnRefreshListener { _viewModel.loadReminders() }
 
-        _viewModel.showSnackBar.observe(viewLifecycleOwner, Observer {
-            Snackbar.make(
-                binding.root,
-                R.string.error_happened, Snackbar.LENGTH_LONG
-            ).show()
-        })
+        showErrorSnackBar()
 
         return binding.root
     }
@@ -61,23 +58,39 @@ class ReminderListFragment : BaseFragment() {
     override fun onResume() {
         super.onResume()
         //load the reminders list on the ui
-        _viewModel.loadReminders()
+        wrapEspressoIdlingResource {
+            _viewModel.loadReminders()
+        }
+    }
+
+    private fun showErrorSnackBar() {
+        wrapEspressoIdlingResource {
+            _viewModel.showSnackBar.observe(viewLifecycleOwner, Observer {
+                Snackbar.make(
+                    binding.root,
+                    R.string.error_happened, Snackbar.LENGTH_LONG
+                ).show()
+            })
+        }
     }
 
     private fun navigateToAddReminder() {
-        //use the navigationCommand live data to navigate between the fragments
-        _viewModel.navigationCommand.postValue(
-            NavigationCommand.To(
-                ReminderListFragmentDirections.toSaveReminder()
+        wrapEspressoIdlingResource {
+            //use the navigationCommand live data to navigate between the fragments
+            _viewModel.navigationCommand.postValue(
+                NavigationCommand.To(
+                    ReminderListFragmentDirections.toSaveReminder()
+                )
             )
-        )
+        }
     }
 
     private fun setupRecyclerView() {
-        val adapter = RemindersListAdapter {}
-
-        //setup the recycler view using the extension function
-        binding.remindersRecyclerView.setup(adapter)
+        wrapEspressoIdlingResource {
+            val adapter = RemindersListAdapter {}
+            //setup the recycler view using the extension function
+            binding.remindersRecyclerView.setup(adapter)
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
