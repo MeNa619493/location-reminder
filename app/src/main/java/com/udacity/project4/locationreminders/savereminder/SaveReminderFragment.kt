@@ -1,5 +1,6 @@
 package com.udacity.project4.locationreminders.savereminder
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.app.PendingIntent
 import android.content.DialogInterface
@@ -13,6 +14,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
+import androidx.core.app.ActivityCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import com.google.android.gms.location.Geofence
@@ -28,6 +30,7 @@ import com.udacity.project4.base.NavigationCommand
 import com.udacity.project4.databinding.FragmentSaveReminderBinding
 import com.udacity.project4.locationreminders.geofence.GeofenceBroadcastReceiver
 import com.udacity.project4.locationreminders.reminderslist.ReminderDataItem
+import com.udacity.project4.locationreminders.savereminder.selectreminderlocation.SelectLocationFragment
 import com.udacity.project4.utils.hasAllVersionsLocationPermissions
 import com.udacity.project4.utils.setDisplayHomeAsUpEnabled
 import org.koin.android.ext.android.inject
@@ -56,13 +59,6 @@ class SaveReminderFragment : BaseFragment() {
         binding.viewModel = _viewModel
 
         _viewModel.showSnackBarInt.observe(viewLifecycleOwner, Observer {
-            Snackbar.make(
-                binding.root,
-                it, Snackbar.LENGTH_LONG
-            ).show()
-        })
-
-        _viewModel.showToast.observe(viewLifecycleOwner, Observer {
             Snackbar.make(
                 binding.root,
                 it, Snackbar.LENGTH_LONG
@@ -134,12 +130,12 @@ class SaveReminderFragment : BaseFragment() {
                 }
             }
         } else {
-            showPermissionDialog()
+            showLocationPermissionDialog()
         }
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
-    private fun showPermissionDialog(){
+    private fun showLocationPermissionDialog(){
         val alertDialogBuilder = MaterialAlertDialogBuilder(activity)
         alertDialogBuilder.setTitle(getString(R.string.location_alert_title))
             .setMessage(getString( R.string.permission_denied_explanation))

@@ -123,12 +123,12 @@ class SelectLocationFragment : BaseFragment() , OnMapReadyCallback {
         if (hasUserEnabledDeviceLocation){
             startDetectUserLocation()
         } else {
-            showPermissionDialog()
+            showLocationPermissionDialog()
         }
     }
 
     private fun setOnMapClick(map: GoogleMap){
-        map.setOnMapClickListener {latLng ->
+        map.setOnMapClickListener { latLng ->
             map.clear()
 
             val snippet = String.format(
@@ -152,7 +152,7 @@ class SelectLocationFragment : BaseFragment() , OnMapReadyCallback {
     }
 
     private fun setOnMapLongClick(map: GoogleMap){
-        map.setOnMapLongClickListener {latLng ->
+        map.setOnMapLongClickListener { latLng ->
             map.clear()
 
             val snippet = String.format(
@@ -204,13 +204,13 @@ class SelectLocationFragment : BaseFragment() , OnMapReadyCallback {
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
-    private fun showPermissionDialog(){
+    private fun showLocationPermissionDialog(){
         val alertDialogBuilder = MaterialAlertDialogBuilder(activity)
         alertDialogBuilder.setTitle(getString(R.string.location_alert_title))
             .setMessage(getString( R.string.permission_denied_explanation))
             .setPositiveButton(getString(R.string.grant)) { dialog: DialogInterface, _: Int ->
-                if (shouldShowRequestPermissionRationale(android.Manifest.permission.ACCESS_FINE_LOCATION)
-                    && shouldShowRequestPermissionRationale(android.Manifest.permission.ACCESS_COARSE_LOCATION)){
+                if (shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)
+                    && shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_COARSE_LOCATION)){
                     showLocationPermissionSnackBar(requireView())
                     if(requireActivity().hasLocationPermissions()){
                         startDetectUserLocation()
@@ -341,7 +341,6 @@ class SelectLocationFragment : BaseFragment() , OnMapReadyCallback {
             selectedMarker.showInfoWindow()
         }
     }
-
 
     companion object{
         const val TAG = "SelectLocationFragment"

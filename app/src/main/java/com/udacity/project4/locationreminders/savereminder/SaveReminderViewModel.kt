@@ -46,7 +46,7 @@ class SaveReminderViewModel(val app: Application, private val dataSource: Remind
      * Save the reminder to the data source
      */
     fun saveReminder(reminderData: ReminderDataItem) {
-        showLoading.value = true
+        showLoading.postValue(true)
         viewModelScope.launch {
             dataSource.saveReminder(
                 ReminderDTO(
@@ -70,6 +70,11 @@ class SaveReminderViewModel(val app: Application, private val dataSource: Remind
     fun validateEnteredData(reminderData: ReminderDataItem): Boolean {
         if (reminderData.title.isNullOrEmpty()) {
             showSnackBarInt.value = R.string.err_enter_title
+            return false
+        }
+
+        if (reminderData.description.isNullOrEmpty()) {
+            showSnackBarInt.value = R.string.err_enter_desc
             return false
         }
 
